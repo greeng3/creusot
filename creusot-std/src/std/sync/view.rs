@@ -34,7 +34,7 @@ impl Clone for SyncView {
 impl SyncView {
     #[check(ghost)]
     #[trusted]
-    pub fn new() -> Ghost<Self> {
+    pub const fn new() -> Ghost<Self> {
         panic!("Should not be called outside ghost code")
     }
 
@@ -45,6 +45,15 @@ impl SyncView {
     #[allow(unused_variables)]
     pub fn weaken(&mut self, to: Snapshot<SyncView>) {
         panic!("Should not be called outside ghost code")
+    }
+
+    #[logic(opaque)]
+    #[ensures(self >= result)]
+    #[ensures(other >= result)]
+    #[ensures(forall<r> self >= r ==> other >= r ==> result >= r)]
+    #[trusted]
+    pub fn meet(self, other: Self) -> Self {
+        dead
     }
 }
 
